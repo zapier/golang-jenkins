@@ -89,7 +89,7 @@ func (jenkins *Jenkins) parseXmlResponseWithWrapperElement(resp *http.Response, 
 		if idx < 0 {
 			return fmt.Errorf("Could not find matching '?>' characters to strip the XML pragma!")
 		}
-		xmlText = xmlText[idx + 2:]
+		xmlText = xmlText[idx+2:]
 	}
 	//log.Printf("Parsing XML: %s", xmlText)
 	wrappedDoc := "<" + rootElementName + ">\n" + xmlText + "\n</" + rootElementName + ">"
@@ -213,7 +213,7 @@ func (jenkins *Jenkins) GetJob(name string) (job Job, err error) {
 }
 
 // GetJobUrl returns the URL for the job with the specified name.
-func (jenkins *Jenkins) GetJobUrl(name string) string {
+func (jenkins *Jenkins) GetJobURL(name string) string {
 	return fmt.Sprintf("/job/%s", name)
 }
 
@@ -237,13 +237,9 @@ func (jenkins *Jenkins) GetLastBuild(job Job) (build Build, err error) {
 
 // Create a new job
 func (jenkins *Jenkins) CreateJob(jobItem JobItem, jobName string) error {
-	jobItemXml := []byte{}
-	if jobItem.MavenJobItem != nil {
-		jobItemXml, _ = xml.Marshal(jobItem.MavenJobItem)
-	} else if jobItem.PipelineJobItem != nil {
-		jobItemXml, _ = xml.Marshal(jobItem.PipelineJobItem)
-	} else {
-		return fmt.Errorf("Unsupported JobItem type (%+v)", jobItem)
+	jobItemXml, err := JobToXml(jobItem)
+	if err != nil {
+		return err
 	}
 	reader := bytes.NewReader(jobItemXml)
 	params := url.Values{"name": []string{jobName}}
@@ -254,6 +250,18 @@ func (jenkins *Jenkins) CreateJob(jobItem JobItem, jobName string) error {
 // Delete a job
 func (jenkins *Jenkins) DeleteJob(job Job) error {
 	return jenkins.post(fmt.Sprintf("/job/%s/doDelete", job.Name), nil, nil)
+}
+
+// Update a job
+func (jenkins *Jenkins) UpdateJob(jobItem JobItem, jobName string) error {
+	jobItemXml, err := JobToXml(jobItem)
+	if err != nil {
+		return err
+	}
+	reader := bytes.NewReader(jobItemXml)
+	params := url.Values{"name": []string{}}
+
+	return jenkins.postXml(jenkins.GetJobURL(jobName), params, reader, nil)
 }
 
 // Add job to view
