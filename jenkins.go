@@ -99,6 +99,10 @@ func (jenkins *Jenkins) parseXmlResponseWithWrapperElement(resp *http.Response, 
 func (jenkins *Jenkins) parseResponse(resp *http.Response, body interface{}) (err error) {
 	defer resp.Body.Close()
 
+	if resp.StatusCode > 201 {
+		return errors.New(resp.Status)
+	}
+
 	if body == nil {
 		return
 	}
