@@ -59,6 +59,18 @@ func (jenkins *Jenkins) buildUrl(path string, params url.Values) (requestUrl str
 	return
 }
 
+func (jenkins *Jenkins) buildUrlNoBase(path string, params url.Values) (requestUrl string) {
+	requestUrl = path + "/api/json"
+	if params != nil {
+		queryString := params.Encode()
+		if queryString != "" {
+			requestUrl = requestUrl + "?" + queryString
+		}
+	}
+
+	return
+}
+
 func (jenkins *Jenkins) buildUrlRaw(path string, params url.Values) (requestUrl string) {
 	requestUrl = jenkins.baseUrl + path
 	if params != nil {
@@ -174,6 +186,19 @@ func (jenkins *Jenkins) get(path string, params url.Values, body interface{}) (e
 	return jenkins.parseResponse(resp, body)
 }
 
+func (jenkins *Jenkins) getUrl(path string, params url.Values, body interface{}) (err error) {
+	requestUrl := jenkins.buildUrlNoBase(path, params)
+	req, err := http.NewRequest("GET", requestUrl, nil)
+	if err != nil {
+		return
+	}
+	resp, err := jenkins.sendRequest(req)
+	if err != nil {
+		return
+	}
+	return jenkins.parseResponse(resp, body)
+}
+
 // uses the actual URL passed in rather than appending api/json
 func (jenkins *Jenkins) getRaw(path string, params url.Values, body interface{}) (data string, err error) {
 	requestUrl := jenkins.buildUrlRaw(path, params)
@@ -222,6 +247,20 @@ func (jenkins *Jenkins) getConfigXml(path string, params url.Values, body interf
 
 func (jenkins *Jenkins) post(path string, params url.Values, body interface{}) (err error) {
 	requestUrl := jenkins.buildUrl(path, params)
+
+	req, err := http.NewRequest("POST", requestUrl, nil)
+	if err != nil {
+		return
+	}
+	resp, err := jenkins.sendRequest(req)
+	if err != nil {
+		return
+	}
+	return jenkins.parseResponse(resp, body)
+}
+
+func (jenkins *Jenkins) postUrl(path string, params url.Values, body interface{}) (err error) {
+	requestUrl := jenkins.buildUrlNoBase(path, params)
 
 	req, err := http.NewRequest("POST", requestUrl, nil)
 	if err != nil {
@@ -285,13 +324,13 @@ func (jenkins *Jenkins) GetJobConfig(name string) (job JobItem, err error) {
 
 // GetBuild returns a number-th build result of specified job.
 func (jenkins *Jenkins) GetBuild(job Job, number int) (build Build, err error) {
-	err = jenkins.get(fmt.Sprintf("/job/%s/%d", job.Name, number), nil, &build)
+	err = jenkins.getUrl(fmt.Sprintf("%s%d", job.Url, number), nil, &build)
 	return
 }
 
 // GetLastBuild returns the last build of specified job.
 func (jenkins *Jenkins) GetLastBuild(job Job) (build Build, err error) {
-	err = jenkins.get(fmt.Sprintf("/job/%s/lastBuild", job.Name), nil, &build)
+	err = jenkins.getUrl(fmt.Sprintf("%slastBuild", job.Url), nil, &build)
 	return
 }
 
@@ -351,7 +390,7 @@ func (jenkins *Jenkins) CreateJobWithXML(jobItemXml string, jobName string) erro
 
 // Delete a job
 func (jenkins *Jenkins) DeleteJob(job Job) error {
-	return jenkins.post(fmt.Sprintf("/job/%s/doDelete", job.Name), nil, nil)
+	return jenkins.postUrl(fmt.Sprintf("%sdoDelete", job.Url), nil, nil)
 }
 
 // Update a job
@@ -392,21 +431,11 @@ func (jenkins *Jenkins) CreateView(listView ListView) error {
 // Create a new build for this job.
 // Params can be nil.
 func (jenkins *Jenkins) Build(job Job, params url.Values) error {
-	if hasParams(job) {
-		return jenkins.post(fmt.Sprintf("/job/%s/buildWithParameters", job.Name), params, nil)
-	} else {
-		return jenkins.post(fmt.Sprintf("/job/%s/build", job.Name), params, nil)
-	}
-}
-
-// Create a new build for this job.
-// Params can be nil.
-func (jenkins *Jenkins) BuildMultiBranch(organisationName, jobName, branch string, job Job, params url.Values) error {
 
 	if hasParams(job) {
-		return jenkins.post(fmt.Sprintf("/job/%s/job/%s/job/%s/buildWithParameters", organisationName, jobName, branch), params, nil)
+		return jenkins.postUrl(fmt.Sprintf("%sbuildWithParameters", job.Url), params, nil)
 	} else {
-		return jenkins.post(fmt.Sprintf("/job/%s/job/%s/job/%s/build", organisationName, jobName, branch), params, nil)
+		return jenkins.postUrl(fmt.Sprintf("%sbuild", job.Url), params, nil)
 	}
 }
 
