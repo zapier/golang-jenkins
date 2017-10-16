@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -178,7 +177,6 @@ func (jenkins *Jenkins) get(path string, params url.Values, body interface{}) (e
 	if err != nil {
 		return
 	}
-	log.Printf("requestUrl: %s", requestUrl)
 	resp, err := jenkins.sendRequest(req)
 	if err != nil {
 		return
