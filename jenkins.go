@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -165,7 +166,7 @@ func (jenkins *Jenkins) get(path string, params url.Values, body interface{}) (e
 	if err != nil {
 		return
 	}
-
+	log.Printf("requestUrl: %s", requestUrl)
 	resp, err := jenkins.sendRequest(req)
 	if err != nil {
 		return
@@ -290,6 +291,11 @@ func (jenkins *Jenkins) GetBuild(job Job, number int) (build Build, err error) {
 // GetLastBuild returns the last build of specified job.
 func (jenkins *Jenkins) GetLastBuild(job Job) (build Build, err error) {
 	err = jenkins.get(fmt.Sprintf("/job/%s/lastBuild", job.Name), nil, &build)
+	return
+}
+
+func (jenkins *Jenkins) GetMultiBranchJob(organisationJobName, multibranchJobName, branch string) (job Job, err error) {
+	err = jenkins.get(fmt.Sprintf("/job/%s/job/%s/job/%s", organisationJobName, multibranchJobName, branch), nil, &job)
 	return
 }
 
