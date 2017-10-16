@@ -233,6 +233,7 @@ func (jenkins *Jenkins) post(path string, params url.Values, body interface{}) (
 	}
 	return jenkins.parseResponse(resp, body)
 }
+
 func (jenkins *Jenkins) postXml(path string, params url.Values, xmlBody io.Reader, body interface{}) (err error) {
 	requestUrl := jenkins.baseUrl + path
 	if params != nil {
@@ -395,6 +396,17 @@ func (jenkins *Jenkins) Build(job Job, params url.Values) error {
 		return jenkins.post(fmt.Sprintf("/job/%s/buildWithParameters", job.Name), params, nil)
 	} else {
 		return jenkins.post(fmt.Sprintf("/job/%s/build", job.Name), params, nil)
+	}
+}
+
+// Create a new build for this job.
+// Params can be nil.
+func (jenkins *Jenkins) BuildMultiBranch(organisationName, jobName, branch string, job Job, params url.Values) error {
+
+	if hasParams(job) {
+		return jenkins.post(fmt.Sprintf("/job/%s/job/%s/job/%s/buildWithParameters", organisationName, jobName, branch), params, nil)
+	} else {
+		return jenkins.post(fmt.Sprintf("/job/%s/job/%s/job/%s/build", organisationName, jobName, branch), params, nil)
 	}
 }
 
