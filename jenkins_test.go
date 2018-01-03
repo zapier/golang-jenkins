@@ -7,7 +7,11 @@ import (
 )
 
 func NewJenkinsWithTestData() *Jenkins {
-	var auth Auth
+	auth := Auth{
+		Username: "admin",
+		ApiToken: "admin",
+	}
+	//return NewJenkins(&auth, "http://jenkins.default.192.168.64.22.nip.io/")
 	return NewJenkins(&auth, "http://example.com")
 }
 
@@ -60,6 +64,14 @@ func TestCreateView(t *testing.T) {
 	newViewName := fmt.Sprintf("test-view-%d", time.Now().UnixNano())
 	err := jenkins.CreateView(NewListView(newViewName))
 
+	if err != nil {
+		t.Errorf("error %v\n", err)
+	}
+}
+
+func TestCreateCredential(t *testing.T) {
+	jenkins := NewJenkinsWithTestData()
+	err := jenkins.CreateCredential("test6", "test5", "tester")
 	if err != nil {
 		t.Errorf("error %v\n", err)
 	}

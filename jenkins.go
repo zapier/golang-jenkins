@@ -26,6 +26,18 @@ type Jenkins struct {
 	client  *http.Client
 }
 
+type Credential struct {
+	Credentials Credentials `json:"credentials"`
+}
+
+type Credentials struct {
+	Scope    string `json:"scope"`
+	Id       string `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Class    string `json:"$class"`
+}
+
 func NewJenkins(auth *Auth, baseUrl string) *Jenkins {
 
 	client := &http.Client{
@@ -96,13 +108,17 @@ func (jenkins *Jenkins) sendRequest(req *http.Request) (*http.Response, error) {
 func (jenkins *Jenkins) parseXmlResponse(resp *http.Response, body interface{}) (err error) {
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 302 && resp.StatusCode != 405 && resp.StatusCode > 201 {
+		return errors.New(resp.Status)
+	}
+
 	if body == nil {
 		return
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return
+		return err
 	}
 
 	return xml.Unmarshal(data, body)
@@ -110,6 +126,10 @@ func (jenkins *Jenkins) parseXmlResponse(resp *http.Response, body interface{}) 
 
 func (jenkins *Jenkins) parseXmlResponseWithWrapperElement(resp *http.Response, body interface{}, rootElementName string) (err error) {
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 302 && resp.StatusCode != 405 && resp.StatusCode > 201 {
+		return errors.New(resp.Status)
+	}
 
 	if body == nil {
 		return
@@ -290,8 +310,23 @@ func (jenkins *Jenkins) postXml(path string, params url.Values, xmlBody io.Reade
 	if err != nil {
 		return
 	}
-
 	return jenkins.parseXmlResponse(resp, body)
+}
+
+func (jenkins *Jenkins) postJson(path string, data url.Values, body interface{}) (err error) {
+	requestUrl := jenkins.baseUrl + path
+
+	req, err := http.NewRequest("POST", requestUrl, strings.NewReader(data.Encode()))
+	if err != nil {
+		return
+	}
+
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	resp, err := jenkins.sendRequest(req)
+	if err != nil {
+		return
+	}
+	return jenkins.parseResponse(resp, body)
 }
 
 // GetJobs returns all jobs you can read.
@@ -338,7 +373,7 @@ func (jenkins *Jenkins) GetMultiBranchJob(organisationJobName, multibranchJobNam
 }
 
 // GetJobByPath looks up the jenkins job via the one or more paths
-func (jenkins *Jenkins) GetJobByPath(path ...string)(job Job, err error){
+func (jenkins *Jenkins) GetJobByPath(path ...string) (job Job, err error) {
 	fullPath := FullJobPath(path...)
 	err = jenkins.get(fullPath, nil, &job)
 	return
@@ -408,6 +443,26 @@ func (jenkins *Jenkins) CreateJobWithXML(jobItemXml string, jobName string) erro
 	params := url.Values{"name": []string{jobName}}
 
 	return jenkins.postXml("/createItem", params, reader, nil)
+}
+
+// Create a new job
+func (jenkins *Jenkins) CreateCredential(id, username, pass string) error {
+	c := Credentials{
+		Scope:    "GLOBAL",
+		Id:       id,
+		Username: username,
+		Password: pass,
+		Class:    "com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl",
+	}
+
+	b, err := json.Marshal(Credential{Credentials: c})
+	if err != nil {
+		return err
+	}
+	data := url.Values{}
+	data.Set("json", string(b))
+
+	return jenkins.postJson("/credentials/store/system/domain/_/createCredentials", data, nil)
 }
 
 // Delete a job
