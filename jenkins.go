@@ -449,6 +449,15 @@ func (jenkins *Jenkins) CreateJobWithXML(jobItemXml string, jobName string) erro
 	return jenkins.postXml("/createItem", params, reader, nil)
 }
 
+// Create a new job in a folder
+func (jenkins *Jenkins) CreateFolderJobWithXML(jobItemXml string, folder string, jobName string) error {
+
+	reader := bytes.NewReader([]byte(jobItemXml))
+	params := url.Values{"name": []string{jobName}}
+
+	return jenkins.postXml("/job/" + folder + "/createItem", params, reader, nil)
+}
+
 // Create a new job
 func (jenkins *Jenkins) CreateCredential(id, username, pass string) error {
 	c := Credentials{
