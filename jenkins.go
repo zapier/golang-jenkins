@@ -52,9 +52,13 @@ func NewJenkins(auth *Auth, baseUrl string) *Jenkins {
 	}
 }
 
+// BaseURL returns the base Jenkins URL
+func (jenkins *Jenkins) BaseURL() string {
+	return jenkins.baseUrl
+}
+
 // SetHTTPClient with timeouts or insecure transport, etc.
 func (jenkins *Jenkins) SetHTTPClient(client *http.Client) {
-
 	jenkins.client = client
 }
 
