@@ -38,6 +38,21 @@ type Credentials struct {
 	Class    string `json:"$class"`
 }
 
+type APIError struct {
+	Status     string
+	StatusCode int
+}
+
+func (err APIError) Error() string {
+	return err.Status
+}
+
+
+func (jenkins *Jenkins) IsErrNotFound(err error) bool {
+	te, ok := err.(APIError)
+	return ok && te.StatusCode == 404
+}
+
 func NewJenkins(auth *Auth, baseUrl string) *Jenkins {
 
 	client := &http.Client{
@@ -113,7 +128,7 @@ func (jenkins *Jenkins) parseXmlResponse(resp *http.Response, body interface{}) 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 302 && resp.StatusCode != 405 && resp.StatusCode > 201 {
-		return errors.New(resp.Status)
+		return APIError{ resp.Status, resp.StatusCode }
 	}
 
 	if body == nil {
