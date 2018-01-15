@@ -147,7 +147,7 @@ func (jenkins *Jenkins) parseXmlResponseWithWrapperElement(resp *http.Response, 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 302 && resp.StatusCode != 405 && resp.StatusCode > 201 {
-		return errors.New(resp.Status)
+		return APIError{ resp.Status, resp.StatusCode }
 	}
 
 	if body == nil {
@@ -176,7 +176,7 @@ func (jenkins *Jenkins) parseResponse(resp *http.Response, body interface{}) (er
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 302 && resp.StatusCode != 405 && resp.StatusCode > 201 {
-		return errors.New(resp.Status)
+		return APIError{ resp.Status, resp.StatusCode }
 	}
 
 	if body == nil {
