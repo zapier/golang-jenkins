@@ -212,7 +212,6 @@ func (jenkins *Jenkins) parseResponse(resp *http.Response, body interface{}) (er
 	if resp.StatusCode != 302 && resp.StatusCode != 405 && resp.StatusCode > 201 {
 		return APIError{resp.Status, resp.StatusCode}
 	}
-
 	if body == nil {
 		return
 	}
@@ -221,7 +220,6 @@ func (jenkins *Jenkins) parseResponse(resp *http.Response, body interface{}) (er
 	if err != nil {
 		return
 	}
-
 	return json.Unmarshal(data, body)
 }
 
@@ -440,8 +438,7 @@ func (jenkins *Jenkins) GetLastBuild(job Job) (build Build, err error) {
 
 // Stops the given build.
 func (jenkins *Jenkins) StopBuild(job Job, number int) error {
-	m := map[string]string{}
-	return jenkins.postUrl(fmt.Sprintf("%s%d/stop", job.Url, number), nil, &m)
+	return jenkins.postUrl(fmt.Sprintf("%s%d/stop", job.Url, number), nil, nil)
 }
 
 
