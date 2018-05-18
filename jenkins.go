@@ -438,6 +438,13 @@ func (jenkins *Jenkins) GetLastBuild(job Job) (build Build, err error) {
 	return
 }
 
+// Stops the given build.
+func (jenkins *Jenkins) StopBuild(job Job, number int) error {
+	m := map[string]string{}
+	return jenkins.postUrl(fmt.Sprintf("%s%d/stop", job.Url, number), nil, &m)
+}
+
+
 func (jenkins *Jenkins) GetMultiBranchJob(organisationJobName, multibranchJobName, branch string) (job Job, err error) {
 	err = jenkins.get(fmt.Sprintf("/job/%s/job/%s/job/%s", organisationJobName, multibranchJobName, branch), nil, &job)
 	return
