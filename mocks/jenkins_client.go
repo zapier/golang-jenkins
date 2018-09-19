@@ -504,21 +504,6 @@ func (mock *MockJenkinsClient) IsErrNotFound(_param0 error) bool {
 	return ret0
 }
 
-func (mock *MockJenkinsClient) NewJenkins(_param0 *golang_jenkins.Auth, _param1 string) *golang_jenkins.Jenkins {
-	if mock == nil {
-		panic("mock must not be nil. Use myMock := NewMockJenkinsClient().")
-	}
-	params := []pegomock.Param{_param0, _param1}
-	result := pegomock.GetGenericMockFrom(mock).Invoke("NewJenkins", params, []reflect.Type{reflect.TypeOf((**golang_jenkins.Jenkins)(nil)).Elem()})
-	var ret0 *golang_jenkins.Jenkins
-	if len(result) != 0 {
-		if result[0] != nil {
-			ret0 = result[0].(*golang_jenkins.Jenkins)
-		}
-	}
-	return ret0
-}
-
 func (mock *MockJenkinsClient) NewLogPoller(_param0 string, _param1 io.Writer) *golang_jenkins.LogPoller {
 	if mock == nil {
 		panic("mock must not be nil. Use myMock := NewMockJenkinsClient().")
@@ -1498,37 +1483,6 @@ func (c *JenkinsClient_IsErrNotFound_OngoingVerification) GetAllCapturedArgument
 		_param0 = make([]error, len(params[0]))
 		for u, param := range params[0] {
 			_param0[u] = param.(error)
-		}
-	}
-	return
-}
-
-func (verifier *VerifierJenkinsClient) NewJenkins(_param0 *golang_jenkins.Auth, _param1 string) *JenkinsClient_NewJenkins_OngoingVerification {
-	params := []pegomock.Param{_param0, _param1}
-	methodInvocations := pegomock.GetGenericMockFrom(verifier.mock).Verify(verifier.inOrderContext, verifier.invocationCountMatcher, "NewJenkins", params)
-	return &JenkinsClient_NewJenkins_OngoingVerification{mock: verifier.mock, methodInvocations: methodInvocations}
-}
-
-type JenkinsClient_NewJenkins_OngoingVerification struct {
-	mock              *MockJenkinsClient
-	methodInvocations []pegomock.MethodInvocation
-}
-
-func (c *JenkinsClient_NewJenkins_OngoingVerification) GetCapturedArguments() (*golang_jenkins.Auth, string) {
-	_param0, _param1 := c.GetAllCapturedArguments()
-	return _param0[len(_param0)-1], _param1[len(_param1)-1]
-}
-
-func (c *JenkinsClient_NewJenkins_OngoingVerification) GetAllCapturedArguments() (_param0 []*golang_jenkins.Auth, _param1 []string) {
-	params := pegomock.GetGenericMockFrom(c.mock).GetInvocationParams(c.methodInvocations)
-	if len(params) > 0 {
-		_param0 = make([]*golang_jenkins.Auth, len(params[0]))
-		for u, param := range params[0] {
-			_param0[u] = param.(*golang_jenkins.Auth)
-		}
-		_param1 = make([]string, len(params[1]))
-		for u, param := range params[1] {
-			_param1[u] = param.(string)
 		}
 	}
 	return
