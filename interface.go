@@ -13,8 +13,11 @@ type JenkinsClient interface {
 	GetJobs() ([]Job, error)
 	GetJob(string) (Job, error)
 	GetJobURLPath(string) string
+	IsErrNotFound(error) bool
+	NewJenkins(*Auth, string) *Jenkins
 	BaseURL() string
 	SetHTTPClient(*http.Client)
+	Post(string, url.Values, interface{}) (err error)
 	GetJobConfig(string) (JobItem, error)
 	GetBuild(Job, int) (Build, error)
 	GetLastBuild(Job) (Build, error)

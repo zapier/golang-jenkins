@@ -489,6 +489,36 @@ func (mock *MockJenkinsClient) GetQueue() (golang_jenkins.Queue, error) {
 	return ret0, ret1
 }
 
+func (mock *MockJenkinsClient) IsErrNotFound(_param0 error) bool {
+	if mock == nil {
+		panic("mock must not be nil. Use myMock := NewMockJenkinsClient().")
+	}
+	params := []pegomock.Param{_param0}
+	result := pegomock.GetGenericMockFrom(mock).Invoke("IsErrNotFound", params, []reflect.Type{reflect.TypeOf((*bool)(nil)).Elem()})
+	var ret0 bool
+	if len(result) != 0 {
+		if result[0] != nil {
+			ret0 = result[0].(bool)
+		}
+	}
+	return ret0
+}
+
+func (mock *MockJenkinsClient) NewJenkins(_param0 *golang_jenkins.Auth, _param1 string) *golang_jenkins.Jenkins {
+	if mock == nil {
+		panic("mock must not be nil. Use myMock := NewMockJenkinsClient().")
+	}
+	params := []pegomock.Param{_param0, _param1}
+	result := pegomock.GetGenericMockFrom(mock).Invoke("NewJenkins", params, []reflect.Type{reflect.TypeOf((**golang_jenkins.Jenkins)(nil)).Elem()})
+	var ret0 *golang_jenkins.Jenkins
+	if len(result) != 0 {
+		if result[0] != nil {
+			ret0 = result[0].(*golang_jenkins.Jenkins)
+		}
+	}
+	return ret0
+}
+
 func (mock *MockJenkinsClient) NewLogPoller(_param0 string, _param1 io.Writer) *golang_jenkins.LogPoller {
 	if mock == nil {
 		panic("mock must not be nil. Use myMock := NewMockJenkinsClient().")
@@ -499,6 +529,21 @@ func (mock *MockJenkinsClient) NewLogPoller(_param0 string, _param1 io.Writer) *
 	if len(result) != 0 {
 		if result[0] != nil {
 			ret0 = result[0].(*golang_jenkins.LogPoller)
+		}
+	}
+	return ret0
+}
+
+func (mock *MockJenkinsClient) Post(_param0 string, _param1 url.Values, _param2 interface{}) error {
+	if mock == nil {
+		panic("mock must not be nil. Use myMock := NewMockJenkinsClient().")
+	}
+	params := []pegomock.Param{_param0, _param1, _param2}
+	result := pegomock.GetGenericMockFrom(mock).Invoke("Post", params, []reflect.Type{reflect.TypeOf((*error)(nil)).Elem()})
+	var ret0 error
+	if len(result) != 0 {
+		if result[0] != nil {
+			ret0 = result[0].(error)
 		}
 	}
 	return ret0
@@ -1431,6 +1476,64 @@ func (c *JenkinsClient_GetQueue_OngoingVerification) GetCapturedArguments() {
 func (c *JenkinsClient_GetQueue_OngoingVerification) GetAllCapturedArguments() {
 }
 
+func (verifier *VerifierJenkinsClient) IsErrNotFound(_param0 error) *JenkinsClient_IsErrNotFound_OngoingVerification {
+	params := []pegomock.Param{_param0}
+	methodInvocations := pegomock.GetGenericMockFrom(verifier.mock).Verify(verifier.inOrderContext, verifier.invocationCountMatcher, "IsErrNotFound", params)
+	return &JenkinsClient_IsErrNotFound_OngoingVerification{mock: verifier.mock, methodInvocations: methodInvocations}
+}
+
+type JenkinsClient_IsErrNotFound_OngoingVerification struct {
+	mock              *MockJenkinsClient
+	methodInvocations []pegomock.MethodInvocation
+}
+
+func (c *JenkinsClient_IsErrNotFound_OngoingVerification) GetCapturedArguments() error {
+	_param0 := c.GetAllCapturedArguments()
+	return _param0[len(_param0)-1]
+}
+
+func (c *JenkinsClient_IsErrNotFound_OngoingVerification) GetAllCapturedArguments() (_param0 []error) {
+	params := pegomock.GetGenericMockFrom(c.mock).GetInvocationParams(c.methodInvocations)
+	if len(params) > 0 {
+		_param0 = make([]error, len(params[0]))
+		for u, param := range params[0] {
+			_param0[u] = param.(error)
+		}
+	}
+	return
+}
+
+func (verifier *VerifierJenkinsClient) NewJenkins(_param0 *golang_jenkins.Auth, _param1 string) *JenkinsClient_NewJenkins_OngoingVerification {
+	params := []pegomock.Param{_param0, _param1}
+	methodInvocations := pegomock.GetGenericMockFrom(verifier.mock).Verify(verifier.inOrderContext, verifier.invocationCountMatcher, "NewJenkins", params)
+	return &JenkinsClient_NewJenkins_OngoingVerification{mock: verifier.mock, methodInvocations: methodInvocations}
+}
+
+type JenkinsClient_NewJenkins_OngoingVerification struct {
+	mock              *MockJenkinsClient
+	methodInvocations []pegomock.MethodInvocation
+}
+
+func (c *JenkinsClient_NewJenkins_OngoingVerification) GetCapturedArguments() (*golang_jenkins.Auth, string) {
+	_param0, _param1 := c.GetAllCapturedArguments()
+	return _param0[len(_param0)-1], _param1[len(_param1)-1]
+}
+
+func (c *JenkinsClient_NewJenkins_OngoingVerification) GetAllCapturedArguments() (_param0 []*golang_jenkins.Auth, _param1 []string) {
+	params := pegomock.GetGenericMockFrom(c.mock).GetInvocationParams(c.methodInvocations)
+	if len(params) > 0 {
+		_param0 = make([]*golang_jenkins.Auth, len(params[0]))
+		for u, param := range params[0] {
+			_param0[u] = param.(*golang_jenkins.Auth)
+		}
+		_param1 = make([]string, len(params[1]))
+		for u, param := range params[1] {
+			_param1[u] = param.(string)
+		}
+	}
+	return
+}
+
 func (verifier *VerifierJenkinsClient) NewLogPoller(_param0 string, _param1 io.Writer) *JenkinsClient_NewLogPoller_OngoingVerification {
 	params := []pegomock.Param{_param0, _param1}
 	methodInvocations := pegomock.GetGenericMockFrom(verifier.mock).Verify(verifier.inOrderContext, verifier.invocationCountMatcher, "NewLogPoller", params)
@@ -1457,6 +1560,41 @@ func (c *JenkinsClient_NewLogPoller_OngoingVerification) GetAllCapturedArguments
 		_param1 = make([]io.Writer, len(params[1]))
 		for u, param := range params[1] {
 			_param1[u] = param.(io.Writer)
+		}
+	}
+	return
+}
+
+func (verifier *VerifierJenkinsClient) Post(_param0 string, _param1 url.Values, _param2 interface{}) *JenkinsClient_Post_OngoingVerification {
+	params := []pegomock.Param{_param0, _param1, _param2}
+	methodInvocations := pegomock.GetGenericMockFrom(verifier.mock).Verify(verifier.inOrderContext, verifier.invocationCountMatcher, "Post", params)
+	return &JenkinsClient_Post_OngoingVerification{mock: verifier.mock, methodInvocations: methodInvocations}
+}
+
+type JenkinsClient_Post_OngoingVerification struct {
+	mock              *MockJenkinsClient
+	methodInvocations []pegomock.MethodInvocation
+}
+
+func (c *JenkinsClient_Post_OngoingVerification) GetCapturedArguments() (string, url.Values, interface{}) {
+	_param0, _param1, _param2 := c.GetAllCapturedArguments()
+	return _param0[len(_param0)-1], _param1[len(_param1)-1], _param2[len(_param2)-1]
+}
+
+func (c *JenkinsClient_Post_OngoingVerification) GetAllCapturedArguments() (_param0 []string, _param1 []url.Values, _param2 []interface{}) {
+	params := pegomock.GetGenericMockFrom(c.mock).GetInvocationParams(c.methodInvocations)
+	if len(params) > 0 {
+		_param0 = make([]string, len(params[0]))
+		for u, param := range params[0] {
+			_param0[u] = param.(string)
+		}
+		_param1 = make([]url.Values, len(params[1]))
+		for u, param := range params[1] {
+			_param1[u] = param.(url.Values)
+		}
+		_param2 = make([]interface{}, len(params[2]))
+		for u, param := range params[2] {
+			_param2[u] = param.(interface{})
 		}
 	}
 	return
