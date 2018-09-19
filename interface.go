@@ -14,7 +14,6 @@ type JenkinsClient interface {
 	GetJob(string) (Job, error)
 	GetJobURLPath(string) string
 	IsErrNotFound(error) bool
-	NewJenkins(*Auth, string) *Jenkins
 	BaseURL() string
 	SetHTTPClient(*http.Client)
 	Post(string, url.Values, interface{}) (err error)
