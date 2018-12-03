@@ -337,22 +337,27 @@ func (jenkins *Jenkins) post(path string, params url.Values, body interface{}) (
 	return jenkins.parseResponse(resp, body)
 }
 
-func (jenkins *Jenkins) postUrl(path string, params url.Values, body interface{}) (err error) {
+func (jenkins *Jenkins) postUrlResp(path string, params url.Values, body interface{}) (*http.Response, error) {
 	requestUrl := jenkins.buildUrlNoBase(path, params)
 
 	req, err := http.NewRequest("POST", requestUrl, nil)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	if _, err := jenkins.checkCrumb(req); err != nil {
-		return err
+		return nil, err
 	}
 
-	resp, err := jenkins.sendRequest(req)
+	return jenkins.sendRequest(req)
+}
+
+func (jenkins *Jenkins) postUrl(path string, params url.Values, body interface{}) (err error) {
+	resp, err := jenkins.postUrlResp(path, params, body)
 	if err != nil {
 		return
 	}
+
 	return jenkins.parseResponse(resp, body)
 }
 
