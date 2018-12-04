@@ -12,12 +12,12 @@ import (
 // Params can be nil.
 func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error) {
 
-	var url string
-	if hasParams(job) {
-		url = fmt.Sprintf("%sbuildWithParameters", job.Url)
-	} else {
-		url = fmt.Sprintf("%sbuild", job.Url)
-	}
+	//var url string
+	//if hasParams(job) {
+	url := fmt.Sprintf("%sbuildWithParameters", job.Url)
+	//} else {
+	//url = fmt.Sprintf("%sbuild", job.Url)
+	//}
 	fmt.Println(url)
 	resp, err := jenkins.postUrlResp(url, params, nil)
 
