@@ -14,7 +14,7 @@ func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error
 
 	var url string
 	if hasParams(job) {
-		url = fmt.Sprintf("%sbuildWithParameters", job.Name)
+		url = fmt.Sprintf("%sbuildWithParameters", job.Url)
 	} else {
 		url = fmt.Sprintf("%sbuild", job.Url)
 	}
