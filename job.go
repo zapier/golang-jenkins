@@ -59,6 +59,8 @@ type Build struct {
 	Actions   []Action   `json:"actions"`
 
 	ChangeSet ScmChangeSet `json:"changeSet"`
+
+	QueueID int `json:"queueId"`
 }
 
 type UpstreamCause struct {

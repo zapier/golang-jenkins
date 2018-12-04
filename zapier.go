@@ -14,7 +14,7 @@ func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error
 
 	var url string
 	if hasParams(job) {
-		url = fmt.Sprintf("%sbuildWithParameters", job.Url)
+		url = fmt.Sprintf("%sbuildWithParameters", job.Name)
 	} else {
 		url = fmt.Sprintf("%sbuild", job.Url)
 	}
@@ -42,7 +42,7 @@ func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error
 }
 
 func (jenkins *Jenkins) GetBuildFromJobAndQueueID(job Job, queueID int) (Build, error) {
-	u := fmt.Sprintf("%s/api/xml?tree=builds&xpath=//build[queueId=%d]", job.Url, queueID)
+	u := fmt.Sprintf("%s/api/xml?tree=builds[id,number,result,queueId]&xpath=//build[queueId=%d]", job.Url, queueID)
 	var build Build
 	err := jenkins.getXml(u, url.Values{}, &build)
 	return build, err
