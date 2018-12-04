@@ -18,10 +18,15 @@ func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error
 	} else {
 		url = fmt.Sprintf("%sbuild", job.Url)
 	}
+	fmt.Println(url)
 	resp, err := jenkins.postUrlResp(url, params, nil)
 
-	if resp.StatusCode != http.StatusCreated || err != nil {
+	if err != nil {
 		return 0, err
+	}
+
+	if resp.StatusCode != http.StatusCreated {
+		return 0, fmt.Errorf("Bad status code %d", resp.StatusCode)
 	}
 
 	location := resp.Header["Location"]
