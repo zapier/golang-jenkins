@@ -28,6 +28,7 @@ func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error
 	if resp.StatusCode != http.StatusCreated {
 		return 0, fmt.Errorf("Bad status code %d", resp.StatusCode)
 	}
+	fmt.Println("Headers: ", resp.Header)
 
 	location := resp.Header["Location"]
 	if len(location) == 0 {
