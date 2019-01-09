@@ -11,14 +11,7 @@ import (
 // Create a new build for this job.
 // Params can be nil.
 func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error) {
-
-	//var url string
-	//if hasParams(job) {
 	url := fmt.Sprintf("%sbuildWithParameters", job.Url)
-	//} else {
-	//url = fmt.Sprintf("%sbuild", job.Url)
-	//}
-	fmt.Println(url)
 	resp, err := jenkins.postUrlResp(url, params, nil)
 
 	if err != nil {
@@ -28,7 +21,6 @@ func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error
 	if resp.StatusCode != http.StatusCreated {
 		return 0, fmt.Errorf("Bad status code %d", resp.StatusCode)
 	}
-	fmt.Println("Headers: ", resp.Header)
 
 	location := resp.Header["Location"]
 	if len(location) == 0 {
@@ -48,8 +40,20 @@ func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error
 }
 
 func (jenkins *Jenkins) GetBuildFromJobAndQueueID(job Job, queueID int) (Build, error) {
-	u := fmt.Sprintf("%s/api/xml?tree=builds[id,url,number,result,queueId]&xpath=//build[queueId=%d]", job.Url, queueID)
 	var build Build
-	err := jenkins.getXml(u, url.Values{}, &build)
+	u := fmt.Sprintf("%s/api/xml?tree=builds[id,url,number,result,queueId]&xpath=//build[queueId=%d]", job.Url, queueID)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		return build, err
+	}
+
+	fmt.Println(u)
+	resp, err := jenkins.sendRequest(req)
+	if err != nil {
+		return build, err
+	}
+	fmt.Println(resp)
+	err = jenkins.parseXmlResponse(resp, &build)
+
 	return build, err
 }
