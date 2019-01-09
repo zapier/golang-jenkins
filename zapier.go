@@ -2,6 +2,7 @@ package gojenkins
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -55,7 +56,7 @@ func (jenkins *Jenkins) GetBuildFromJobAndQueueID(job Job, queueID int) (Build, 
 	fmt.Println(resp)
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return build, err
 	}
 	fmt.Println(data)
 
