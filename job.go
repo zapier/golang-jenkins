@@ -40,9 +40,10 @@ type ScmChangeSet struct {
 }
 
 type Build struct {
-	Id     string `json:"id"`
-	Number int    `json:"number"`
-	Url    string `json:"url"`
+	XMLName xml.Name `xml:"build"`
+	Id      string   `json:"id" xml:"id"`
+	Number  int      `json:"number"`
+	Url     string   `json:"url"`
 
 	FullDisplayName string `json:"fullDisplayName"`
 	Description     string `json:"description"`
