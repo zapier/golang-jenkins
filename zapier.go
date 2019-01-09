@@ -41,7 +41,7 @@ func (jenkins *Jenkins) BuildWithQueueID(job Job, params url.Values) (int, error
 
 func (jenkins *Jenkins) GetBuildFromJobAndQueueID(job Job, queueID int) (Build, error) {
 	var build Build
-	u := fmt.Sprintf("%s/api/xml?tree=builds[id,url,number,result,queueId]&xpath=//build[queueId=%d]", job.Url, queueID)
+	u := fmt.Sprintf("%sapi/xml?tree=builds[id,url,number,result,queueId]&xpath=//build[queueId=%d]", job.Url, queueID)
 	req, err := http.NewRequest("GET", u, nil)
 	if err != nil {
 		return build, err
