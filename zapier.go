@@ -53,6 +53,12 @@ func (jenkins *Jenkins) GetBuildFromJobAndQueueID(job Job, queueID int) (Build, 
 		return build, err
 	}
 	fmt.Println(resp)
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	fmt.Println(data)
+
 	err = jenkins.parseXmlResponse(resp, &build)
 
 	return build, err
