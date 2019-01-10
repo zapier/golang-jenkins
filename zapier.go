@@ -47,7 +47,6 @@ func (jenkins *Jenkins) GetBuildFromJobAndQueueID(job Job, queueID int) (Build, 
 		return build, err
 	}
 
-	fmt.Println(u)
 	resp, err := jenkins.sendRequest(req)
 	if err != nil {
 		return build, err
